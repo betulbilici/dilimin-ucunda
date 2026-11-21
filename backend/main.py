@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,17 +11,42 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, field_validator
 
 try:
-    from .llm import AdayKelime, LLMYanitHatasi, YapilandirmaHatasi, adaylari_uret
+    from .llm import (
+        AdayKelime,
+        LLMYanitHatasi,
+        YapilandirmaHatasi,
+        _env_yukle,
+        adaylari_uret,
+    )
     from .verify import kelime_dogrula
 except ImportError:
-    from llm import AdayKelime, LLMYanitHatasi, YapilandirmaHatasi, adaylari_uret
+    from llm import (
+        AdayKelime,
+        LLMYanitHatasi,
+        YapilandirmaHatasi,
+        _env_yukle,
+        adaylari_uret,
+    )
     from verify import kelime_dogrula
+
+
+def _cors_kokenleri() -> list[str]:
+    """Vite dev adreslerine ek olarak isteğe bağlı CORS_ORIGIN değerlerini okur."""
+    _env_yukle()
+    kokenler = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    ek_kokenler = (os.getenv("CORS_ORIGIN") or "").split(",")
+    for ham in ek_kokenler:
+        temiz = ham.strip().rstrip("/")
+        if temiz and temiz not in kokenler:
+            kokenler.append(temiz)
+    return kokenler
+
 
 app = FastAPI(title="Dilimin Ucunda API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=_cors_kokenleri(),
     allow_credentials=False,
     allow_methods=["POST", "OPTIONS"],
     allow_headers=["Content-Type"],
