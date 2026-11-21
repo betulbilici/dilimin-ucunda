@@ -40,15 +40,43 @@ function KategoriSekli({ sekil }) {
   );
 }
 
-export default function CandidateCard({ aday }) {
+export default function CandidateCard({
+  aday,
+  vurgulu = false,
+  secili = false,
+  onSec,
+  onVurgula,
+  kartRef,
+}) {
   const kat = KATEGORI_GORUNUMU[aday.kategori] || {
     sinif: "soyut",
     etiket: aday.kategori,
     sekil: "elmas",
   };
 
+  function handleKeyDown(event) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onSec?.(aday.kelime);
+    }
+  }
+
   return (
-    <article className="aday-karti">
+    <article
+      ref={kartRef}
+      className={`aday-karti ${vurgulu ? "aday-karti--vurgulu" : ""} ${
+        secili ? "aday-karti--secili" : ""
+      }`}
+      role="button"
+      tabIndex={0}
+      aria-pressed={secili}
+      onClick={() => onSec?.(aday.kelime)}
+      onKeyDown={handleKeyDown}
+      onMouseEnter={() => onVurgula?.(aday.kelime)}
+      onMouseLeave={() => onVurgula?.(null)}
+      onFocus={() => onVurgula?.(aday.kelime)}
+      onBlur={() => onVurgula?.(null)}
+    >
       <header className="aday-ust">
         <div className="aday-baslik-grubu">
           <h3 className="aday-kelime">{aday.kelime}</h3>
@@ -60,6 +88,9 @@ export default function CandidateCard({ aday }) {
             >
               sözlükte doğrulanamadı
             </span>
+          )}
+          {secili && (
+            <span className="harita-secili-etiketi">Haritada seçili</span>
           )}
         </div>
 
