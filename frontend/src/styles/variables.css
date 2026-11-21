@@ -1,0 +1,55 @@
+:root {
+  /* Yüzey ve metin renkleri */
+  --bg-page: #f8f6f1;
+  --bg-card: #ffffff;
+  --bg-subtle: #f1ede4;
+  --text-primary: #1d242b;
+  --text-secondary: #53606e;
+  --text-muted: #76828f;
+  --border-subtle: #e4ded3;
+  --border-strong: #cfc7b8;
+
+  /* Vurgu ve odak */
+  --accent: #2c4c70;
+  --accent-hover: #213a57;
+  --accent-soft: #e9f0f7;
+  --focus-ring: #2c4c70;
+
+  /* Kategori pastel paleti */
+  --cat-duygu-bg: #fdebec;
+  --cat-duygu-border: #f3c1c4;
+  --cat-duygu-text: #8c2b32;
+
+  --cat-eylem-bg: #e9f2fc;
+  --cat-eylem-border: #bad4f2;
+  --cat-eylem-text: #1f4e7d;
+
+  --cat-soyut-bg: #e8f5ec;
+  --cat-soyut-border: #b6dec2;
+  --cat-soyut-text: #1e5e38;
+
+  /* Uyarı ve hata */
+  --warn-bg: #fef7e6;
+  --warn-border: #f0d48c;
+  --warn-text: #7a5400;
+
+  --error-bg: #fdf0ef;
+  --error-border: #efb8b4;
+  --error-text: #8f2620;
+
+  /* Tipografi */
+  --font-sans: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+
+  /* Köşe yarıçapları, boşluklar ve gölgeler */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --space-xs: 0.375rem;
+  --space-sm: 0.75rem;
+  --space-md: 1.25rem;
+  --space-lg: 2rem;
+
+  --shadow-card: 0 2px 10px rgba(29, 36, 43, 0.05);
+  --shadow-card-hover: 0 6px 20px rgba(29, 36, 43, 0.08);
+}

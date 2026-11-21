@@ -1,0 +1,86 @@
+.yukleniyor-durumu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.yukleniyor-metni {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.iskelet-listesi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.iskelet-karti {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.iskelet-ust {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.iskelet-parca {
+  display: block;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--bg-subtle) 25%,
+    #e7e1d5 50%,
+    var(--bg-subtle) 75%
+  );
+  background-size: 200% 100%;
+  animation: iskelet-parilti 1.4s ease-in-out infinite;
+}
+
+.iskelet-kelime {
+  width: 145px;
+  height: 28px;
+}
+
+.iskelet-rozet {
+  width: 96px;
+  height: 24px;
+  border-radius: 999px;
+}
+
+.iskelet-satir {
+  width: 100%;
+  height: 15px;
+}
+
+.iskelet-satir--kisa {
+  width: 72%;
+}
+
+.iskelet-kutu {
+  width: 100%;
+  height: 54px;
+  border-radius: var(--radius-md);
+}
+
+@keyframes iskelet-parilti {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

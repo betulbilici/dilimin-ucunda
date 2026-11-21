@@ -1,0 +1,43 @@
+.hata-kutusu {
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.hata-baslik {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  color: var(--error-text);
+}
+
+.hata-mesaj {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.tekrar-dene-butonu {
+  min-height: 40px;
+  padding: 0.5rem 1.1rem;
+  border: 1px solid var(--error-border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-card);
+  color: var(--error-text);
+  font-weight: 600;
+  transition: background-color 0.15s ease;
+}
+
+.tekrar-dene-butonu:hover {
+  background-color: #fbe5e3;
+}
+
+@media (max-width: 640px) {
+  .tekrar-dene-butonu {
+    width: 100%;
+  }
+}
