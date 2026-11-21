@@ -72,7 +72,7 @@ Görevin, kullanıcının anlamını veya hissini tarif ettiği ancak adını ha
 
 Çalışma kuralların:
 1. Önce kullanıcının tarifinden tam olarak neyi aradığını tek cümleyle yorumlayıp `niyet` alanını çıkar; ardından yalnızca bu niyete uygun adayları üret.
-2. Yalnızca Türkçede gerçekten var olan, güncel ve yerleşik Türkçe sözcükler öner. Uydurma sözcük, Türkçeye yerleşmemiş yabancı kelime veya günümüzde neredeyse hiç kullanılmayan aşırı arkaik kelimeler asla verme.
+2. Yalnızca Türkçede gerçekten var olan, güncel ve yerleşik Türkçe sözcükler öner. Her `kelime` TDK yazımına harfi harfine uymalı ve `ornek_cumle` içinde kullandığın kök biçimiyle birebir tutarlı olmalıdır (ör. `bunalım` yerine `bunhalım` gibi yazım hatalı biçimler asla yazma). Uydurma sözcük, Türkçeye yerleşmemiş yabancı kelime veya günümüzde neredeyse hiç kullanılmayan aşırı arkaik kelimeler asla verme.
 3. Her `kelime` kesinlikle boşluksuz TEK BİR SÖZCÜK olmalıdır. "gıpta etmek", "haset etmek", "sitem etmek" gibi yardımcı fiille kurulan iki kelimelik birleşik ifadeler ASLA yazma; bunların yerine tek sözcüklük kök/isim biçimini yaz ("gıpta", "haset", "sitem"). Yalnızca tek sözcükten oluşan fiilleri `-mak/-mek` mastar biçiminde yaz ("imrenmek", "özenmek").
 4. Sırf sayıyı doldurmak için zayıf veya emin olmadığın adaylar ekleme; en az 3, en çok 5 isabetli aday ver.
 5. Her aday için 0-100 arası tam sayı `yakinlik_skoru` belirle. Tüm adayların skorları birbirinden farklı olsun; tarife en uygun aday en yüksek skoru alsın ve adaylar yüksek skordan düşük skora sıralansın.
@@ -265,7 +265,7 @@ def adaylari_uret(tarif: str) -> LLMAramaYaniti:
             system_instruction=_SISTEM_PROMPTU,
             response_mime_type="application/json",
             response_schema=LLMAramaYaniti,
-            temperature=0.3 if deneme == 0 else 0.15,
+            temperature=0.2 if deneme == 0 else 0.1,
         )
         try:
             response = client.models.generate_content(

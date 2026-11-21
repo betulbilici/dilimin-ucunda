@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import "./SemanticMap.css";
 
 const VIEW_W = 620;
@@ -115,6 +116,7 @@ export default function SemanticMap({
   onSec,
   onListeyeGit,
 }) {
+  const dugumRefleri = useRef([]);
   const merkezMetni = (niyet || tarif || "").trim();
   const merkezSatirlari = metniSatirla(merkezMetni, 17, 3);
   const ilkSatirY = CY - ((merkezSatirlari.length - 1) * 16) / 2 + 9;
@@ -266,7 +268,7 @@ export default function SemanticMap({
           </g>
 
           {/* Aday kelime düğümleri */}
-          {dugumler.map(({ aday, skor, x, y, genislik, kat }) => {
+          {dugumler.map(({ aday, skor, x, y, genislik, kat }, index) => {
             const vurgulu = vurguluKelime === aday.kelime;
             const secili = seciliKelime === aday.kelime;
             const soluk = birDugumVurgulu && !vurgulu;
@@ -274,6 +276,9 @@ export default function SemanticMap({
             return (
               <g
                 key={aday.kelime}
+                ref={(el) => {
+                  dugumRefleri.current[index] = el;
+                }}
                 transform={`translate(${x}, ${y})`}
                 className={`harita-dugumu harita-dugumu--${kat.sinif} ${
                   vurgulu ? "harita-dugumu--vurgulu" : ""
@@ -295,12 +300,40 @@ export default function SemanticMap({
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     onSec(aday.kelime);
+                  } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                    e.preventDefault();
+                    const sonraki = (index + 1) % dugumler.length;
+                    dugumRefleri.current[sonraki]?.focus({ preventScroll: true });
+                  } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                    e.preventDefault();
+                    const onceki =
+                      (index - 1 + dugumler.length) % dugumler.length;
+                    dugumRefleri.current[onceki]?.focus({ preventScroll: true });
+                  } else if (e.key === "Escape") {
+                    e.preventDefault();
+                    if (seciliKelime) {
+                      onSec(seciliKelime);
+                    }
+                    onVurgula(null);
+                    e.currentTarget.blur();
                   }
                 }}
               >
                 <title>
                   {`${aday.kelime} (${kat.etiket}, %${skor})\n${aday.kisa_anlam}`}
                 </title>
+
+                {(vurgulu || secili) && (
+                  <rect
+                    x={-genislik / 2 - 4}
+                    y={-DUGUM_YUKSEKLIK / 2 - 4}
+                    width={genislik + 8}
+                    height={DUGUM_YUKSEKLIK + 8}
+                    rx={kat.rx + 4}
+                    className="harita-odak-halkasi"
+                    aria-hidden="true"
+                  />
+                )}
 
                 <rect
                   x={-genislik / 2}
@@ -366,26 +399,32 @@ export default function SemanticMap({
         </span>
       </div>
 
-      {aktifAday && (
-        <div className="harita-onizleme" aria-live="polite">
-          <div className="harita-onizleme-ust">
-            <strong>{aktifAday.kelime}</strong>
-            <span className="harita-onizleme-skor">
-              %{aktifAday.yakinlik_skoru} uyum
-            </span>
-          </div>
-          <p className="harita-onizleme-anlam">{aktifAday.kisa_anlam}</p>
-          {seciliKelime === aktifAday.kelime && onListeyeGit && (
-            <button
-              type="button"
-              className="harita-karta-git-buton"
-              onClick={onListeyeGit}
-            >
-              Kart detayını gör
-            </button>
-          )}
-        </div>
-      )}
+      <div className="harita-onizleme">
+        {aktifAday ? (
+          <>
+            <div className="harita-onizleme-ust">
+              <strong>{aktifAday.kelime}</strong>
+              <span className="harita-onizleme-skor">
+                %{aktifAday.yakinlik_skoru} uyum
+              </span>
+            </div>
+            <p className="harita-onizleme-anlam">{aktifAday.kisa_anlam}</p>
+            {seciliKelime === aktifAday.kelime && onListeyeGit && (
+              <button
+                type="button"
+                className="harita-karta-git-buton"
+                onClick={onListeyeGit}
+              >
+                Kart detayını gör
+              </button>
+            )}
+          </>
+        ) : (
+          <p className="harita-onizleme-ipucu">
+            Bir düğümün üzerine gelin, ok tuşlarıyla gezinin veya tıklayın.
+          </p>
+        )}
+      </div>
     </section>
   );
 }

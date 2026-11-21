@@ -18,7 +18,7 @@ try:
         _env_yukle,
         adaylari_uret,
     )
-    from .verify import kelime_dogrula
+    from .verify import kelime_dogrula, ornekten_yazim_duzelt, turkce_kucult
 except ImportError:
     from llm import (
         AdayKelime,
@@ -27,7 +27,7 @@ except ImportError:
         _env_yukle,
         adaylari_uret,
     )
-    from verify import kelime_dogrula
+    from verify import kelime_dogrula, ornekten_yazim_duzelt, turkce_kucult
 
 
 def _cors_kokenleri() -> list[str]:
@@ -120,11 +120,22 @@ def ara(istek: AramaIstegi) -> AramaYaniti:
     except LLMYanitHatasi as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
-    dogrulanmis_adaylar = [
-        DogrulanmisAday(
-            **aday.model_dump(),
-            dogrulandi=kelime_dogrula(aday.kelime),
+    mevcut_kelimeler = {turkce_kucult(aday.kelime) for aday in sonuc.adaylar}
+    dogrulanmis_adaylar: list[DogrulanmisAday] = []
+
+    for aday in sonuc.adaylar:
+        veri = aday.model_dump()
+        dogrulandi = kelime_dogrula(aday.kelime)
+
+        if dogrulandi is False:
+            duzeltilmis = ornekten_yazim_duzelt(aday.kelime, aday.ornek_cumle)
+            if duzeltilmis and duzeltilmis not in mevcut_kelimeler:
+                mevcut_kelimeler.add(duzeltilmis)
+                veri["kelime"] = duzeltilmis
+                dogrulandi = True
+
+        dogrulanmis_adaylar.append(
+            DogrulanmisAday(**veri, dogrulandi=dogrulandi)
         )
-        for aday in sonuc.adaylar
-    ]
+
     return AramaYaniti(niyet=sonuc.niyet, adaylar=dogrulanmis_adaylar)

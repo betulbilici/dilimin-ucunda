@@ -79,7 +79,6 @@
 .baglanti-cizgisi {
   stroke: var(--border-strong);
   stroke-width: 1.5;
-  transition: stroke 0.15s ease, stroke-width 0.15s ease, opacity 0.15s ease;
 }
 
 .baglanti-cizgisi--vurgulu {
@@ -113,7 +112,6 @@
 .harita-dugumu {
   cursor: pointer;
   outline: none;
-  transition: opacity 0.15s ease;
 }
 
 .harita-dugumu--soluk {
@@ -122,7 +120,13 @@
 
 .harita-dugum-kutu {
   stroke-width: 1.75;
-  transition: stroke-width 0.15s ease, filter 0.15s ease;
+}
+
+.harita-odak-halkasi {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-opacity: 0.32;
 }
 
 .harita-dugumu--duygu {
@@ -156,7 +160,6 @@
 .harita-dugumu--secili .harita-dugum-kutu {
   stroke: var(--accent);
   stroke-width: 2.75;
-  filter: drop-shadow(0 4px 10px rgba(44, 76, 112, 0.18));
 }
 
 .harita-dugumu:focus-visible .harita-dugum-kutu {
@@ -231,10 +234,20 @@
 }
 
 .harita-onizleme {
+  min-height: 82px;
   padding: 0.75rem 0.9rem;
   border-radius: var(--radius-md);
   background-color: var(--bg-subtle);
   border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.harita-onizleme-ipucu {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
 }
 
 .harita-onizleme-ust {

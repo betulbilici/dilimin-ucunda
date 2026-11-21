@@ -10,9 +10,11 @@ import "./App.css";
 
 export default function App() {
   const [tarif, setTarif] = useState("");
+  const [sonArananTarif, setSonArananTarif] = useState("");
   const [yukleniyor, setYukleniyor] = useState(false);
   const [hata, setHata] = useState("");
   const [sonuc, setSonuc] = useState(null);
+  const [aramaAcik, setAramaAcik] = useState(true);
   const [seciliKelime, setSeciliKelime] = useState(null);
   const [uzerindekiKelime, setUzerindekiKelime] = useState(null);
   const [aktifSekme, setAktifSekme] = useState("liste");
@@ -43,10 +45,17 @@ export default function App() {
     setSeciliKelime(yeniSecim);
 
     if (yeniSecim && window.innerWidth > 960) {
-      kartRefleri.current[yeniSecim]?.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      });
+      const el = kartRefleri.current[yeniSecim];
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const gorunur = rect.top >= 0 && rect.bottom <= window.innerHeight;
+        if (!gorunur) {
+          el.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+          });
+        }
+      }
     }
   }
 
@@ -74,13 +83,21 @@ export default function App() {
       const veri = await kelimeAra(tarif, { signal: controller.signal });
       if (!controller.signal.aborted) {
         setSonuc(veri);
+        setSonArananTarif(tarif.trim());
         setSeciliKelime(null);
         setUzerindekiKelime(null);
+        if (veri.adaylar.length > 0) {
+          setAramaAcik(false);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          setAramaAcik(true);
+        }
       }
     } catch (err) {
       if (err && err.name === "AbortError") {
         return;
       }
+      setAramaAcik(true);
       setHata(
         err instanceof Error && err.message
           ? err.message
@@ -95,6 +112,7 @@ export default function App() {
 
   const vurguluKelime = uzerindekiKelime || seciliKelime;
   const sonucVar = !yukleniyor && !hata && sonuc && sonuc.adaylar.length > 0;
+  const kompaktMod = sonucVar || (yukleniyor && sonuc && sonuc.adaylar.length > 0);
 
   return (
     <div
@@ -102,24 +120,51 @@ export default function App() {
         sonucVar ? "uygulama-kapsayici--genis" : ""
       }`}
     >
-      <header className="ust-baslik">
-        <p className="uygulama-etiketi">Türkçe Ters Sözlük</p>
-        <h1 className="uygulama-basligi">Dilimin Ucunda</h1>
-        <p className="uygulama-altbaslik">
-          Aklındaki Türkçe kelimeyi anlamı veya hissiyle tarif et, yakın
-          adayları anlam incelikleriyle keşfet.
-        </p>
-      </header>
+      {kompaktMod ? (
+        <header className="sonuc-ust-cubugu">
+          <div className="sonuc-ust-sol">
+            <span className="kompakt-marka">Dilimin Ucunda</span>
+            {sonArananTarif && (
+              <p className="kompakt-tarif" title={sonArananTarif}>
+                “{sonArananTarif}”
+              </p>
+            )}
+          </div>
+          {sonucVar && (
+            <button
+              type="button"
+              className="yeni-tarif-buton"
+              aria-expanded={aramaAcik}
+              onClick={() => setAramaAcik((onceki) => !onceki)}
+            >
+              {aramaAcik ? "Aramayı gizle" : "Yeni tarif"}
+            </button>
+          )}
+        </header>
+      ) : (
+        <header className="ust-baslik">
+          <p className="uygulama-etiketi">Türkçe Ters Sözlük</p>
+          <h1 className="uygulama-basligi">Dilimin Ucunda</h1>
+          <p className="uygulama-altbaslik">
+            Aklındaki Türkçe kelimeyi anlamı veya hissiyle tarif et, yakın
+            adayları anlam incelikleriyle keşfet.
+          </p>
+        </header>
+      )}
 
       <main className="ana-icerik">
-        <div className="arama-bolumu">
-          <SearchBox
-            tarif={tarif}
-            onTarifChange={setTarif}
-            onAra={aramayiBaslat}
-            yukleniyor={yukleniyor}
-          />
-        </div>
+        {(!kompaktMod || aramaAcik) && (
+          <div className="arama-bolumu">
+            <SearchBox
+              tarif={tarif}
+              onTarifChange={setTarif}
+              onAra={aramayiBaslat}
+              yukleniyor={yukleniyor}
+              otomatikOdak={sonucVar && aramaAcik}
+              onKapat={sonucVar ? () => setAramaAcik(false) : undefined}
+            />
+          </div>
+        )}
 
         <div className="sonuc-alani">
           {yukleniyor && (
@@ -204,7 +249,7 @@ export default function App() {
                 >
                   <SemanticMap
                     niyet={sonuc.niyet}
-                    tarif={tarif}
+                    tarif={sonArananTarif || tarif}
                     adaylar={sonuc.adaylar}
                     vurguluKelime={vurguluKelime}
                     seciliKelime={seciliKelime}

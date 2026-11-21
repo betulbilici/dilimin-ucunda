@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import "./SearchBox.css";
 
 const ORNEK_TARIFLER = [
@@ -19,9 +19,22 @@ const ORNEK_TARIFLER = [
   },
 ];
 
-export default function SearchBox({ tarif, onTarifChange, onAra, yukleniyor }) {
+export default function SearchBox({
+  tarif,
+  onTarifChange,
+  onAra,
+  yukleniyor,
+  otomatikOdak = false,
+  onKapat,
+}) {
   const textareaRef = useRef(null);
   const kirpilmisUzunluk = tarif.trim().length;
+
+  useEffect(() => {
+    if (otomatikOdak) {
+      textareaRef.current?.focus({ preventScroll: true });
+    }
+  }, [otomatikOdak]);
 
   let uzunlukNotu = "10 – 500 karakter arası";
   let uzunlukDurumu = "normal";
@@ -46,6 +59,9 @@ export default function SearchBox({ tarif, onTarifChange, onAra, yukleniyor }) {
       if (!yukleniyor) {
         onAra();
       }
+    } else if (event.key === "Escape" && onKapat) {
+      event.preventDefault();
+      onKapat();
     }
   }
 
@@ -54,16 +70,41 @@ export default function SearchBox({ tarif, onTarifChange, onAra, yukleniyor }) {
     textareaRef.current?.focus();
   }
 
+  function handleTemizle() {
+    onTarifChange("");
+    textareaRef.current?.focus();
+  }
+
   return (
-    <section className="arama-kutusu-sarici" aria-labelledby="tarif-etiket">
+    <section
+      className="arama-kutusu-sarici"
+      aria-labelledby="tarif-etiket"
+      onKeyDown={(e) => {
+        if (e.key === "Escape" && onKapat) {
+          e.preventDefault();
+          onKapat();
+        }
+      }}
+    >
       <form className="arama-formu" onSubmit={handleSubmit} noValidate>
         <div className="arama-etiket-satiri">
           <label id="tarif-etiket" htmlFor="tarif-alani" className="arama-etiket">
             Aklındaki anlamı, hissi veya durumu tarif et
           </label>
-          <span className="klavye-ipucu" aria-hidden="true">
-            Ctrl + Enter ile ara
-          </span>
+          <div className="arama-ust-sag">
+            <span className="klavye-ipucu" aria-hidden="true">
+              Ctrl + Enter ile ara
+            </span>
+            {onKapat && (
+              <button
+                type="button"
+                className="arama-kapat-buton"
+                onClick={onKapat}
+              >
+                Kapat
+              </button>
+            )}
+          </div>
         </div>
 
         <textarea
@@ -88,14 +129,26 @@ export default function SearchBox({ tarif, onTarifChange, onAra, yukleniyor }) {
             <span>{uzunlukNotu}</span>
           </p>
 
-          <button
-            type="submit"
-            className="ara-butonu"
-            disabled={yukleniyor}
-            aria-busy={yukleniyor}
-          >
-            {yukleniyor ? "Aranıyor..." : "Ara"}
-          </button>
+          <div className="arama-aksiyonlari">
+            {tarif.length > 0 && (
+              <button
+                type="button"
+                className="temizle-butonu"
+                onClick={handleTemizle}
+                disabled={yukleniyor}
+              >
+                Temizle
+              </button>
+            )}
+            <button
+              type="submit"
+              className="ara-butonu"
+              disabled={yukleniyor}
+              aria-busy={yukleniyor}
+            >
+              {yukleniyor ? "Aranıyor..." : "Ara"}
+            </button>
+          </div>
         </div>
       </form>
 
