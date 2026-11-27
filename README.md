@@ -77,10 +77,8 @@ npm run dev
 
 GitHub Pages yalnızca statik dosyaları (`frontend/dist`) barındırır; `GEMINI_API_KEY` güvenliği için Python backend ayrı bir Python sunucusunda (ör. Render veya Railway) çalıştırılmalıdır.
 
-1. **Backend'i yayınlayın:** `backend/` uygulamasını `uvicorn backend.main:app --host 0.0.0.0 --port $PORT` komutuyla çalıştırın ve sunucu ortam değişkenlerine şunları ekleyin:
-   - `GEMINI_API_KEY`
-   - `GEMINI_MODEL` (ör. `gemini-3.5-flash-lite`)
-   - `CORS_ORIGIN=https://betulbilici.github.io`
+1. **Backend'i Render'da tek tıkla yayınlayın:** Depodaki [`render.yaml`](render.yaml) Blueprint dosyası hazır gelir. Render panelinden **New + → Blueprint** seçip bu depoyu bağlayın; açılan ekranda yalnızca `GEMINI_API_KEY` değerini girin (`GEMINI_MODEL=gemini-3.5-flash-lite`, `CORS_ORIGIN=https://betulbilici.github.io` ve `/api/saglik` sağlık kontrolü otomatik tanımlanır).
+   *(Başka bir platform kullanacaksanız `uvicorn backend.main:app --host 0.0.0.0 --port $PORT` komutuyla çalıştırıp `GEMINI_API_KEY`, `GEMINI_MODEL` ve `CORS_ORIGIN=https://betulbilici.github.io` değişkenlerini ekleyin.)*
 2. **GitHub Pages kaynağını açın:** Depoda `Settings -> Pages -> Build and deployment -> Source` ayarını **GitHub Actions** yapın.
 3. **API adresini tanımlayın:** `Settings -> Secrets and variables -> Actions -> Variables` altında `VITE_API_URL` değişkenini canlı backend adresiniz (ör. `https://dilimin-ucunda-api.onrender.com`) olarak ekleyin.
 4. **Dağıtımı tetikleyin:** `main` dalına push attığınızda [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) otomatik olarak `frontend` derlemesini alıp GitHub Pages'e yayınlar.

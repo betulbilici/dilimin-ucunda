@@ -2,6 +2,10 @@ const API_BASE_URL = (
   import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 ).replace(/\/$/, "");
 
+const YEREL_SUNUCU = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(
+  API_BASE_URL
+);
+
 function durumHataMesaji(status) {
   if (status === 422) {
     return "Tarif en az 10, en fazla 500 karakter olmalıdır.";
@@ -32,7 +36,9 @@ export async function kelimeAra(tarif, { signal } = {}) {
       throw err;
     }
     throw new Error(
-      `Sunucuya bağlanılamadı. Backend'in ${API_BASE_URL} adresinde çalıştığından emin olun.`
+      YEREL_SUNUCU
+        ? `Sunucuya bağlanılamadı. Backend'in ${API_BASE_URL} adresinde çalıştığından emin olun.`
+        : "Sunucuya şu an ulaşılamadı. Sunucu uyku modundan uyanıyor olabilir; birkaç saniye sonra tekrar deneyin."
     );
   }
 

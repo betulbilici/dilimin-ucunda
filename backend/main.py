@@ -48,7 +48,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_kokenleri(),
     allow_credentials=False,
-    allow_methods=["POST", "OPTIONS"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type"],
 )
 
@@ -109,6 +109,11 @@ async def dogrulama_hatasi_yakala(_istek, exc: RequestValidationError) -> JSONRe
         else "Geçersiz istek verisi."
     )
     return JSONResponse(status_code=422, content={"detail": mesaj})
+
+
+@app.get("/api/saglik")
+def saglik() -> dict[str, str]:
+    return {"durum": "ok"}
 
 
 @app.post("/api/ara", response_model=AramaYaniti)

@@ -14,6 +14,16 @@
   font-weight: 500;
 }
 
+.yukleniyor-uyku-notu {
+  margin: 0;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-md);
+  background-color: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  color: var(--warn-text);
+  font-size: 0.9rem;
+}
+
 .iskelet-listesi {
   display: flex;
   flex-direction: column;
